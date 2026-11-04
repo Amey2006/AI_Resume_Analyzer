@@ -10,11 +10,15 @@ const formatSize = (bytes) => {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
 
-export default function UploadZip({ sessionId }) {
+export default function UploadZip({ sessionId, onReady }) {
   const [file, setFile] = useState(null);
   const [status, setStatus] = useState("idle"); // idle | uploading | processing | success | error
   const [errorMessage, setErrorMessage] = useState("");
   const pollRef = useRef(null);
+
+  useEffect(() => {
+    onReady?.(status === "success");
+  }, [status, onReady]);
 
   useEffect(() => {
     return () => {
@@ -69,18 +73,22 @@ export default function UploadZip({ sessionId }) {
   const busy = status === "uploading" || status === "processing";
 
   return (
-    <div className="apple-card p-7 md:p-8 flex flex-col" data-testid="upload-zip-card">
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-[11px] font-mono tracking-widest uppercase text-[#0071e3] dark:text-[#2997ff] px-2 py-0.5 rounded-full bg-[#0071e3]/10 dark:bg-[#2997ff]/15">
-          Step 01
-        </span>
+    <div className="card p-7 md:p-8 flex flex-col" data-testid="upload-zip-card">
+      <div className="flex items-center gap-3 mb-4">
+        <div className="icon-tile"><Upload size={18} /></div>
+        <div>
+          <span className="step-num">STEP 01</span>
+          <h3 className="hl-headline text-[20px] t-ink">Upload resumes</h3>
+        </div>
       </div>
-      <h3 className="hl-headline text-[22px] text-neutral-900 dark:text-white">
-        Load candidates
-      </h3>
-      <p className="mt-1 text-[14px] text-neutral-500 dark:text-neutral-400">
-        Upload a .zip archive containing the resumes you want to screen.
+      <p className="text-[14px] t-soft">
+        Put all candidate resumes (PDF or DOCX) in one folder, zip it, and upload it here.
+        We'll read and index every resume.
       </p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <span className="chip">.zip only</span>
+        <span className="chip">max 100 MB</span>
+      </div>
 
       <label
         className={`dropzone ${file ? "filled" : ""} mt-5 flex items-center gap-4 p-5 cursor-pointer relative`}
@@ -112,15 +120,15 @@ export default function UploadZip({ sessionId }) {
           className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
           data-testid="upload-zip-input"
         />
-        <div className="w-9 h-9 rounded-lg bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10 flex items-center justify-center text-[#0071e3] dark:text-[#2997ff] flex-shrink-0">
+        <div className="icon-tile soft" style={{ width: 40, height: 40 }}>
           <Upload size={16} />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-[13px] font-mono truncate text-neutral-800 dark:text-neutral-100">
+          <div className="text-[13px] font-mono truncate t-ink">
             {file ? file.name : "Choose a .zip file"}
           </div>
-          <div className="text-[12px] text-neutral-500 mt-0.5">
-            {file ? formatSize(file.size) : "or drop it here"}
+          <div className="text-[12px] t-mute mt-0.5">
+            {file ? formatSize(file.size) : "Click to browse or drag & drop"}
           </div>
         </div>
       </label>
@@ -138,30 +146,30 @@ export default function UploadZip({ sessionId }) {
         </button>
 
         {status === "uploading" && (
-          <span className="text-[12px] font-mono text-neutral-500 inline-flex items-center gap-2">
+          <span className="text-[12px] font-mono t-mute inline-flex items-center gap-2">
             <span className="spinner" /> Uploading archive
           </span>
         )}
         {status === "processing" && (
           <span
-            className="text-[12px] font-mono text-neutral-500 inline-flex items-center gap-2"
+            className="text-[12px] font-mono t-mute inline-flex items-center gap-2"
             data-testid="upload-zip-status-processing"
           >
-            <span className="spinner" /> Generating vector embeddings…
+            <span className="spinner" /> Reading & indexing resumes…
           </span>
         )}
         {status === "success" && (
           <span
-            className="text-[12px] font-mono text-[#34c759] inline-flex items-center gap-1.5"
+            className="text-[12px] font-mono text-emerald-500 inline-flex items-center gap-1.5"
             data-testid="upload-zip-status-success"
           >
-            <Check size={13} /> Resumes ready
+            <Check size={13} /> Resumes ready — go to step 2
           </span>
         )}
         {status === "error" && (
-          <span className="text-[12px] font-mono text-[#ff453a] inline-flex items-center gap-1.5">
+          <span className="text-[12px] font-mono text-red-500 inline-flex items-center gap-1.5">
             <AlertCircle size={13} />
-            {!file ? "ZIP file exceeds 100MB limit" : "Upload failed — try again"}
+            {errorMessage || "Upload failed — try again"}
           </span>
         )}
       </div>

@@ -80,31 +80,31 @@ export default function MockRankingPreview() {
 
   return (
     <div 
-      className={`mt-20 md:mt-28 mx-auto max-w-[880px] w-full transition-all duration-1000 ease-out transform ${
+      className={`mt-12 md:mt-14 mx-auto max-w-[880px] w-full transition-all duration-1000 ease-out transform ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
       }`}
     >
-      <div className="mock-window overflow-hidden border border-black/5 dark:border-white/10 rounded-2xl shadow-xl bg-white dark:bg-[#1c1c1e]">
+      <div className="mock-window overflow-hidden border border-black/5 dark:border-white/10 rounded-2xl shadow-xl">
         {/* Top Window Header */}
         <div className="flex items-center gap-1.5 px-4 h-9 border-b border-black/5 dark:border-white/10 bg-black/[0.02] dark:bg-white/[0.02]">
           <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
           <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
           <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-          <span className="ml-4 text-[11px] font-mono text-neutral-500">hire-help.app / rank</span>
+          <span className="ml-4 text-[11px] font-mono t-mute">hire-help.app / rank</span>
         </div>
 
         {/* Card Body */}
         <div className="p-6 md:p-8 text-left">
           <div className="flex items-center justify-between mb-5">
             <div>
-              <div className="text-[11px] font-mono uppercase tracking-widest text-neutral-500">
+              <div className="text-[11px] font-mono uppercase tracking-widest t-mute">
                 Ranked candidates
               </div>
-              <div className="hl-headline text-[22px] mt-1 text-neutral-900 dark:text-white">
+              <div className="hl-headline text-[22px] mt-1 t-ink">
                 Senior Product Designer
               </div>
             </div>
-            <div className="text-[11px] font-mono text-neutral-500">
+            <div className="text-[11px] font-mono t-mute">
               {candidates.length} scored
             </div>
           </div>
@@ -117,23 +117,23 @@ export default function MockRankingPreview() {
                 className={`absolute left-0 right-0 flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-[800ms] ease-in-out transform`}
                 style={{
                   transform: `translateY(${r.layoutIndex * ROW_HEIGHT_WITH_GAP}px)`,
-                  backgroundColor: r.top ? "rgba(0, 113, 227, 0.05)" : "rgba(0, 0, 0, 0.02)",
-                  borderColor: r.top ? "rgba(0, 113, 227, 0.2)" : "transparent",
+                  backgroundColor: r.top ? "var(--brand-soft)" : "transparent",
+                  borderColor: r.top ? "color-mix(in srgb, var(--brand) 35%, transparent)" : "var(--line)",
                   borderWidth: "1px"
                 }}
               >
                 {/* Dynamically display actual rank position based on layout index */}
-                <span className="w-6 text-center text-[12px] font-mono text-neutral-500">
+                <span className="w-6 text-center text-[12px] font-mono t-mute">
                   {r.layoutIndex + 1}
                 </span>
                 
-                <span className="flex-1 text-[14px] font-medium text-neutral-800 dark:text-neutral-100 truncate">
+                <span className="flex-1 text-[14px] font-medium t-ink truncate">
                   {r.name}
                 </span>
 
-                <div className="w-28 bg-neutral-200/50 dark:bg-neutral-800 h-2 rounded-full overflow-hidden">
+                <div className="w-28 meter-track">
                   <div
-                    className="h-full bg-[#0071e3] dark:bg-[#2997ff] rounded-full transition-all duration-[1200ms] ease-out"
+                    className="meter-fill" style={{transitionDuration: "1200ms"}}
                     style={{ width: `${(r.displayScore || 0) * 100}%` }}
                   />
                 </div>
